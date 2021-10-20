@@ -13,7 +13,6 @@ arc('k','q',3).
 % rules can go here
 % 
 
-
 :-
     % 
     % queries go here
@@ -32,10 +31,13 @@ arc('k','q',3).
     
     % next few lines are an example of how to query an existing fact
     % (WhatLength is the "output" since StartNode, EndNode, are known)
-    arc(StartNode, EndNode, WhatLength),
-    write(WhatLength), write('\n'),
+	
+	(arc(StartNode, EndNode, WhatLength) -> write(WhatLength), write('\n') ; write("No direct path"), write('\n')),
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % comment out these^ lines out when you start coding yourself
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    
-    !. % end
+    L = [],
+	write(L),
+	halt(0),
+	
+    !. end
