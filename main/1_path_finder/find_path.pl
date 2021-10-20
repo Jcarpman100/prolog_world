@@ -1,6 +1,6 @@
 % 
 % facts can go here
-% 
+% Howdy
 
 % here's a graph definition
 arc('m','p',8).
