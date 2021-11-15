@@ -1,3 +1,6 @@
-% Wumpus World Report
-# Joseph Carpman
+Wumpus World Report
+==============
+#	Joseph Carpman
+
+##   Introduction
 
