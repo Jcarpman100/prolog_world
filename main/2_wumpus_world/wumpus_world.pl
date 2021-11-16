@@ -170,13 +170,13 @@ initialize_world(fig72) :-
   ww_retractall,
   retractall(ww_initial_state(_)),
   assert(ww_initial_state([])),
-  addto_ww_init_state(wumpus_world_extent(4)),
-  addto_ww_init_state(wumpus_location(1,3)),
+  addto_ww_init_state(wumpus_world_extent(5)),
+  addto_ww_init_state(wumpus_location(2,3)),
   addto_ww_init_state(wumpus_health(alive)),
-  addto_ww_init_state(gold(2,3)),
-  addto_ww_init_state(pit(4,1)),
+  addto_ww_init_state(gold(1,4)),
+  addto_ww_init_state(pit(4,3)),
   addto_ww_init_state(pit(3,3)),
-  addto_ww_init_state(pit(4,4)),
+  addto_ww_init_state(pit(1,3)),
   ww_initial_state(L),
   assert_list(L).
 

@@ -143,7 +143,7 @@ run_agent(_, _) :- display_world, boredom(X), X1 is X + 1, replace_existing_fact
 
 % Bored
 % A new tile has not been seen for 16 moves, go home.
-run_agent([_,_,_,_,_], _) :- not(home(1)), boredom(X), X >= 15, assert(home(1)), write("I'm going home\n"), false().
+run_agent([_,_,_,_,_], _) :- not(home), boredom(X), X >= 15, assert(home), write("I'm going home\n"), false().
 
 
 % All objectives complete.
@@ -151,6 +151,8 @@ run_agent([_,_,_,_,_], _) :- not(home(1)), boredom(X), X >= 15, assert(home(1)),
 run_agent([_,_,_,_,_], _) :- not(home), gold(1), murder, assert(home), false().
 
 run_agent([_,_,_,_,_], _) :- not(home), gold(1), not(haveArrow), assert(home), false().
+
+run_agent([_,_,_,_,_], _) :- not(home), gold(1), not(stench(_,_)), assert(home), false().
 
 
 % Scream!
@@ -247,7 +249,7 @@ replace_existing_fact(location(X,Y), location(Dx, Dy)), write("forward!").
 run_agent(_,turnleft):- location(X,Y), next_tile(X, Y, Dx, Dy), home, not(visited(Dx, Dy)),  direction(A),
 turn(B,A), replace_existing_fact(direction(A), direction(B)), write("Unvisited tile ahead, turn!").
 
-run_agent(_,turnright):- location(X,Y), next_tile(X, Y, Dx, Dy), not(home(1)), unVisited(X, Y),
+run_agent(_,turnright):- location(X,Y), next_tile(X, Y, Dx, Dy), not(home), unVisited(X, Y),
 replace_existing_fact(boredom(G), boredom(0)), visited(Dx, Dy),  direction(A), turn(A,B),
 replace_existing_fact(direction(A), direction(B)), write("Unvisited tile nearby!").
 
