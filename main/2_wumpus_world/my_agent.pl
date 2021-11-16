@@ -12,6 +12,7 @@
 % This is what should be fleshed out
 % Space fact, (X, Y, Safe, PossiblePit, PossibleWumpus)
 
+% dynamic facts for assertion later, not all of them are used in the end. That's alright in my book.
 :- dynamic noStench/2, noBreeze/2, stench/2, breeze/2, visited/2, wall/2, safety/2, haveArrow/0, murder/0, home/0.
 
 % turn facts, can turn left or right, mostly use right turns because they are the right way to go.
@@ -118,6 +119,7 @@ isSafe(X,Y) :- not(pit(X,Y)), safety(X,Y).
 
 % wumpus nearby?
 % Is one of neighboring tiles the wumpus?
+% Tells the agent to look around to kill it.
 wumpusFound(X, Y) :- X1 is X - 1, conWumpus(X1,Y).
 wumpusFound(X, Y) :- X2 is X + 1, conWumpus(X2,Y).
 wumpusFound(X, Y) :- Y1 is Y - 1, conWumpus(X,Y1).
@@ -136,13 +138,14 @@ unVisited(X, Y) :- Y2 is Y + 1, not(visited(X, Y2)), not(wall(X,Y2)), isSafe(X,Y
 
 
 % display world
-% Just print the world at every turn.
+% Just print the world at every turn and increment the boredom counter.
 run_agent(_, _) :- display_world, boredom(X), X1 is X + 1, replace_existing_fact(boredom(X), boredom(X1)), false().
 
 % --------- purely percept predicates ---------------------------------------------------------------------------------------
 
 % Bored
 % A new tile has not been seen for 16 moves, go home.
+% Better to actually know if there were new tiles left, but I am not that smart.
 run_agent([_,_,_,_,_], _) :- not(home), boredom(X), X >= 15, assert(home), write("I'm going home\n"), false().
 
 
@@ -156,12 +159,13 @@ run_agent([_,_,_,_,_], _) :- not(home), gold(1), not(stench(_,_)), assert(home),
 
 
 % Scream!
-% Assert murder.
+% Assert murder, this means that the wumpus is dead and we don't need to worry about it.
 run_agent([_,_,_,_,yes], _) :- assert(murder), false().
 
 
 % Bump
-% retract the perceived movement, turn, and assert the location as a wall.
+% retract the perceived movement, turn right, and assert the location as a wall.
+% uses weird math that changes the location fact like the agent was walking backwards.
 run_agent([_,_,_,yes,_], turnright):- location(X,Y), retract(visited(X,Y)), assert(wall(X,Y)), 
 next_tile(X, Y, Dx, Dy), DDx is (2 * X) - Dx, DDy is (2 * Y) - Dy, replace_existing_fact(location(X,Y), location(DDx, DDy)),
 write("bump\n"), direction(A), turn(A,B), write("turn!"), replace_existing_fact(direction(A), direction(B)).
@@ -213,8 +217,8 @@ run_agent([yes,_,_,_,_], shoot):- location(0,0), haveArrow, next_tile(0, 0, Dx, 
 retract(haveArrow), write("I'm in a corner with the beast!.\n").
 
 
-% On ladder with gold!
-% Leave, we have won!
+% On ladder with objectives complete
+% Leave, we are going home!
 run_agent([_,_,_,_,_], climb):- location(0,0), home.
 
 
@@ -240,12 +244,13 @@ replace_existing_fact(direction(A), direction(B)), write("Wall ahead.").
 
 % Meander home
 % If you have the gold and the next tile has been visited, move forward.
+% If the next tile is not visited, turn left.
 run_agent(_,goforward):- location(X,Y), next_tile(X, Y, Dx, Dy), home, visited(Dx,Dy),
 replace_existing_fact(location(X,Y), location(Dx, Dy)), write("forward!").
 
 
 % Meander to the gold
-% If you do not have the gold and you haven't visited a nearby tile, turn
+% If you do not have the gold and you haven't visited a nearby tile, turn right
 run_agent(_,turnleft):- location(X,Y), next_tile(X, Y, Dx, Dy), home, not(visited(Dx, Dy)),  direction(A),
 turn(B,A), replace_existing_fact(direction(A), direction(B)), write("Unvisited tile ahead, turn!").
 
